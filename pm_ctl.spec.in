@@ -1,0 +1,88 @@
+########################################
+# Derived definitions
+########################################
+%define __check_files %{nil}
+%define name @PACKAGE@
+%define version @VERSION@
+%define release 1
+%define prefix /usr
+
+%define pmctldir %{prefix}/share/pacemaker/%{name}
+%define pmctllinkdir %{prefix}/sbin
+
+Summary: Pacemaker cluster controller.
+Name: %{name}
+Version: %{version}
+Release: %{release}%{?dist}
+Group: Applications
+Source: %{name}-%{version}.tar.gz
+License: GPL
+Vendor: NIPPON TELEGRAPH AND TELEPHONE CORPORATION
+BuildRoot: %{_tmppath}/%{name}-%{version}
+BuildRequires: make
+BuildArch: noarch
+Requires: python >= 2.4, python < 3.0
+
+########################################
+%description
+Control cluster for Pacemaker.
+
+########################################
+%prep
+rm -rf $RPM_BUILD_ROOT
+%setup -q -n %{name}-%{version}
+
+########################################
+%build
+
+########################################
+%configure
+
+########################################
+%install
+make DESTDIR=$RPM_BUILD_ROOT install
+ln -fs %{pmctldir}/%{name}_start.py  %{pmctllinkdir}/%{name}_start
+ln -fs %{pmctldir}/%{name}_stop.py   %{pmctllinkdir}/%{name}_stop
+ln -fs %{pmctldir}/%{name}_move.py   %{pmctllinkdir}/%{name}_move
+ln -fs %{pmctldir}/%{name}_status.py %{pmctllinkdir}/%{name}_status
+
+########################################
+%clean
+if
+	[ -n "${RPM_BUILD_ROOT}" -a "${RPM_BUILD_ROOT}" != "/" ]
+then
+	rm -rf $RPM_BUILD_ROOT
+fi
+rm -rf $RPM_BUILD_DIR/%{name}-%{version}
+
+########################################
+%pre
+true
+
+########################################
+%post
+true
+
+########################################
+%preun
+true
+
+########################################
+%postun
+true
+
+########################################
+%files
+%defattr(-,root,root)
+%dir %{pmctldir}
+%{pmctldir}/%{name}_start.py
+%{pmctldir}/%{name}_stop.py
+%{pmctldir}/%{name}_move.py
+%{pmctldir}/%{name}_status.py
+%{pmctllinkdir}/%{name}_start
+%{pmctllinkdir}/%{name}_stop
+%{pmctllinkdir}/%{name}_move
+%{pmctllinkdir}/%{name}_status
+%ghost %{pmctldir}/%{name}_*.pyc
+%ghost %{pmctldir}/%{name}_*.pyo
+
