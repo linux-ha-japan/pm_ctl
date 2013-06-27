@@ -40,6 +40,9 @@ SSH_USER = "root"
 # one node timeout(sec)
 NODE_TIMEOUT = 120
 
+CMD_SYSTEMD = "systemctl stop pacemaker_combined.service"
+CMD_UPSTART = "initctl stop pacemaker.combined"
+
 class Crm:
 
     # timeout handler for overtime kill
@@ -103,9 +106,14 @@ class Crm:
     def stop_pm(self,list_node):
 
         try:
+            rc, output = commands.getstatusoutput('which systemctl')
+            if rc == 0:
+                pm_cmd = CMD_SYSTEMD
+            else:
+                pm_cmd = CMD_UPSTART
 
             for stop_node in list_node:
-                cmd_stop_pm = "ssh %s@%s service heartbeat stop" % (SSH_USER,stop_node)
+                cmd_stop_pm = "ssh %s@%s '%s'" % (SSH_USER, stop_node, pm_cmd)
 
                 # run of heartbeat stop command
                 self.sub_pro = subprocess.Popen(cmd_stop_pm,shell=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
