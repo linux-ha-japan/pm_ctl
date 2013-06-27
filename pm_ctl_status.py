@@ -84,7 +84,7 @@ SET_UNCLEAN ="UNCLEAN"
 SET_NONE ="NONE"
 
 # minus infinity value 
-MINUS_INF = "-1000000"
+MINUS_INF = "-INFINITY"
 
 # user of ssh
 SSH_USER = "root"
@@ -93,7 +93,7 @@ SSH_USER = "root"
 thread_crm_cmd = "ssh %s@%s crm_mon -r1"
 
 # information of ptest for each node
-thread_ptest_cmd= "ssh %s@%s ptest -L -s"
+thread_ptest_cmd= "ssh %s@%s crm_simulate -L -s"
 
 # information of resource for each node
 rsc_tbl = {}
