@@ -40,7 +40,7 @@ SSH_USER = "root"
 # one node timeout(sec)
 NODE_TIMEOUT = 120
 
-CMD_SYSTEMD = "systemctl stop pacemaker_combined.service"
+CMD_SYSTEMD = "systemctl stop pacemaker.service"
 CMD_UPSTART = "initctl stop pacemaker.combined"
 
 class Crm:
