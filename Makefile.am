@@ -13,7 +13,7 @@ SPEC          = $(PACKAGE_NAME).spec
 TARFILE       = $(PACKAGE_NAME)-$(VERSION).tar.gz
 EXTRA_DIST    = $(pmctl_SCRIPTS) $(SPEC) autogen.sh
 
-RPM_ROOT      = $(shell pwd)
+RPM_ROOT      = $(CURDIR)
 RPMBUILDOPTS  = --define "_sourcedir $(RPM_ROOT)" --define "_specdir $(RPM_ROOT)"
 
 install-data-hook:
