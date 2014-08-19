@@ -104,26 +104,24 @@ class Crm:
 
     # stop pacemaker service
     def stop_pm(self,list_node):
-
         try:
-            rc, output = commands.getstatusoutput('which systemctl')
-            if rc == 0:
-                pm_cmd = CMD_SYSTEMD
-            else:
-                pm_cmd = CMD_UPSTART
-
-            for stop_node in list_node:
-                cmd_stop_pm = "ssh %s@%s '%s'" % (SSH_USER, stop_node, pm_cmd)
-
-                # run of heartbeat stop command
-                self.sub_pro = subprocess.Popen(cmd_stop_pm,shell=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
-                self.sub_pro.wait()
-
-                if self.sub_pro.returncode == 0:
-                    continue
+            for node in list_node:
+                cmd = "ssh %s@%s '%s'" % (SSH_USER, node, 'which systemctl')
+                rc, output = commands.getstatusoutput(cmd)
+                if rc == 0:
+                    cmd = "ssh %s@%s '%s'" % (SSH_USER, node, CMD_SYSTEMD)
                 else:
-                    print "Failed to \"%s\". [%s]" % (cmd_stop_pm, self.sub_pro.stdout.read().rstrip())
-                    sys.exit(1)
+                    cmd = "ssh %s@%s '%s'" % (SSH_USER, node, CMD_UPSTART)
+
+                self.sub_pro = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+                self.sub_pro.wait()
+                output = self.sub_pro.stdout.read()
+
+                if self.sub_pro.returncode == 0 or \
+                   output.startswith("initctl: Unknown instance:"):
+                    continue
+                print "Failed to \"%s\". [%s]" % (cmd, output.rstrip())
+                sys.exit(1)
 
         except Exception:
             print "Error stop function!",sys.exc_info()[0]
